@@ -1,30 +1,73 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import { onMounted } from 'vue'
+import GameCard from './components/GameCard.vue'
+import InventoryGrid from './components/InventoryGrid.vue'
+import ItemModal from './components/ItemModal.vue'
+import InfoBlock from './components/InfoBlock.vue'
+import { useInventoryStore } from './store/inventory'
+
+const store = useInventoryStore()
+
+const handleReset = () => {
+  if (confirm('Вы уверены что хотите сбросить инвентарь?')) {
+    store.resetToDefault()
+  }
+}
+
+onMounted(() => {
+  store.loadFromLocalStorage()
+  store.loadGameData()
+})
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <button 
+    class="reset-button"
+    @click="handleReset"
+  >
+    Сбросить инвентарь
+  </button>
+  <div class="wrapper">
+    <GameCard />
+    <InventoryGrid />
+    <InfoBlock />
+    <ItemModal v-if="store.selectedItemId" />
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  height: 100vh;
+  width: 100%;
+  max-width: 849px;
+  max-height: 660px;
+  margin: 0 auto;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+.reset-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &:hover {
+    background: #cc0000;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+
 </style>
